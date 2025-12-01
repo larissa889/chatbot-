@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Assistant Agricole Intelligent</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='agricole.png') }}">
+</head>
+<body>
+    <!-- Overlay pour le menu mobile -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Menu latéral mobile -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <h3>Menu</h3>
+            <button class="close-btn" id="closeMenu">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <nav class="mobile-nav">
+            <a href="#" class="active"><i class="fas fa-home"></i> Accueil</a>
+            <a href="#" id="newChat"><i class="fas fa-plus-circle"></i> Nouvelle conversation</a>
+            
+            <div class="menu-divider"></div>
+            <div class="menu-section">
+                <div class="menu-section-header" id="historyHeader">
+                    <h4>Historique des conversations</h4>
+                    <i class="fas fa-chevron-down" id="historyToggle"></i>
+                </div>
+                <div class="menu-section-content" id="historyContent">
+                    <div id="conversationHistory">
+                        <!-- Les conversations seront chargées ici par JavaScript -->
+                        <div class="no-conversations">Aucune conversation récente</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="menu-divider"></div>
+            <h4>Ressources</h4>
+            <a href="#meteo"><i class="fas fa-cloud-sun"></i> Météo</a>
+            <a href="#plantation"><i class="fas fa-seedling"></i> Calendrier des plantations</a>
+            <a href="#parasites"><i class="fas fa-bug"></i> Lutte contre les parasites</a>
+            
+            <div class="menu-divider"></div>
+            <a href="{{ url_for('metrics') }}"><i class="fas fa-chart-line"></i> Métriques</a>
+            <a href="{{ url_for('performance') }}"><i class="fas fa-tachometer-alt"></i> Performance</a>
+        </nav>
+    </div>
+
+    <div class="chat-container">
+        <!-- En-tête du chat -->
+        <header class="chat-header">
+            <button class="menu-button" id="menu-button" aria-label="Ouvrir le menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <img src="{{ url_for('static', filename='agricole.png') }}" alt="Logo" class="header-logo">
+            <div class="header-content">
+                <h1>Assistant Agricole</h1>
+                <p>Votre expert en agriculture connectée</p>
+            </div>
+            <div class="weather-widget" id="weatherWidget">
+                <i class="fas fa-sun"></i>
+                <span>Chargement...</span>
+            </div>
+        </header>
+
+        <!-- Zone des messages -->
+        <div class="chat-box" id="chatBox">
+            <!-- Message de bienvenue -->
+            <div class="message bot">
+                <div class="message-avatar">
+                    <img src="{{ url_for('static', filename='agricole.png') }}" alt="Logo" class="bot-avatar">
+                </div>
+                <div class="message-content">
+                    <div class="message-text">
+                        👋 Bonjour ! Je suis votre assistant agricole intelligent.Comment puis-je vous aider aujourd'hui? 
+                        
+                    </div>
+                    <div class="message-time">{{ now.strftime('%H:%M') }}</div>
+                </div>
+            </div>
+
+            <!-- Historique des messages -->
+            {% for msg in conversation %}
+                <!-- Message de l'utilisateur -->
+                <div class="message user">
+                    <div class="message-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-text">{{ msg.user }}</div>
+                        <div class="message-time">{{ msg.timestamp }}</div>
+                    </div>
+                </div>
+
+                <!-- Réponse du bot -->
+                <div class="message bot">
+                    <div class="message-avatar">
+                        <img src="{{ url_for('static', filename='agricole.png') }}" alt="Logo" class="bot-avatar">
+                    </div>
+                    <div class="message-content">
+                        <div class="message-text">{{ msg.bot|safe }}</div>
+                        <div class="message-meta">
+                            <span class="message-time">{{ msg.timestamp }}</span>
+                            <span class="confidence">Confiance: {{ msg.score }}%</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <!-- Indicateur de frappe -->
+            <div class="typing-indicator" id="typingIndicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <!-- Suggestions rapides -->
+        <div class="quick-suggestions">
+            <button class="suggestion-btn" data-question="Quelle est la meilleure période pour planter du maïs ?">
+                <i class="fas fa-calendar-alt"></i> Période de plantation
+            </button>
+            <button class="suggestion-btn" data-question="Comment lutter contre les pucerons ?">
+                <i class="fas fa-bug"></i> Lutte contre les parasites
+            </button>
+            <button class="suggestion-btn" data-question="Quelle est la météo cette semaine ?">
+                <i class="fas fa-cloud-sun"></i> Météo locale
+            </button>
+        </div>
+
+        <!-- Zone de saisie -->
+        <form method="POST" class="input-area" id="chatForm">
+            <div class="input-wrapper">
+                <input 
+                    type="text" 
+                    name="input" 
+                    id="userInput"
+                    placeholder="Posez votre question agricole..." 
+                    required 
+                    autocomplete="off"
+                    aria-label="Votre message">
+                <button type="submit" id="sendButton" aria-label="Envoyer">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Éléments du DOM
+        const chatForm = document.getElementById('chatForm');
+        const chatBox = document.getElementById('chatBox');
+        const userInput = document.getElementById('userInput');
+        const sendButton = document.getElementById('sendButton');
+        const menuButton = document.getElementById('menu-button');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const closeMenu = document.getElementById('closeMenu');
+        const overlay = document.getElementById('overlay');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const suggestionBtns = document.querySelectorAll('.suggestion-btn');
+        const weatherWidget = document.getElementById('weatherWidget');
+
+        // Fonctions utilitaires
+        function scrollToBottom() {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            typingIndicator.style.display = 'flex';
+            scrollToBottom();
+        }
+
+        function hideTypingIndicator() {
+            typingIndicator.style.display = 'none';
+        }
+
+        function toggleMenu() {
+            mobileMenu.classList.toggle('active');
+            overlay.classList.toggle('active');
+            document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+        }
+
+        // Gestion du menu mobile
+        menuButton.addEventListener('click', toggleMenu);
+        closeMenu.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        // Gestion des suggestions rapides
+        suggestionBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                userInput.value = btn.getAttribute('data-question');
+                userInput.focus();
+            });
+        });
+
+        // Gestion de la soumission du formulaire
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const message = userInput.value.trim();
+            if (!message) return;
+            
+            // Désactiver le champ de saisie pendant l'envoi
+            userInput.disabled = true;
+            sendButton.disabled = true;
+            
+            // Afficher l'indicateur de frappe
+            showTypingIndicator();
+            
+            try {
+                // Envoyer la requête au serveur
+                const response = await fetch('/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `input=${encodeURIComponent(message)}`
+                });
+                
+                if (!response.ok) throw new Error('Erreur réseau');
+                
+                // Recharger la page pour afficher la nouvelle conversation
+                window.location.reload();
+                
+            } catch (error) {
+                console.error('Erreur:', error);
+                // Afficher un message d'erreur
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'message error';
+                errorDiv.innerHTML = `
+                    <div class="message-avatar">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-text">
+                            Désolé, une erreur est survenue. Veuillez réessayer.
+                        </div>
+                    </div>
+                `;
+                chatBox.appendChild(errorDiv);
+                scrollToBottom();
+            } finally {
+                // Réactiver le champ de saisie
+                userInput.disabled = false;
+                sendButton.disabled = false;
+                hideTypingIndicator();
+                userInput.focus();
+            }
+        });
+
+        // Faire défiler vers le bas au chargement
+        window.addEventListener('load', scrollToBottom);
+
+        // Simulation de données météo (à remplacer par un appel API réel)
+        function updateWeather() {
+            const weatherIcons = ['☀️', '⛅', '🌧️', '⛈️', '🌤️'];
+            const temperatures = ['22°C', '24°C', '20°C', '18°C', '25°C'];
+            const weatherTexts = ['Ensoleillé', 'Partiellement nuageux', 'Pluie légère', 'Orages', 'Éclaircies'];
+            
+            const randomIndex = Math.floor(Math.random() * weatherIcons.length);
+            const weatherWidget = document.getElementById('weatherWidget');
+            
+            if (weatherWidget) {
+                weatherWidget.innerHTML = `
+                    ${weatherIcons[randomIndex]}
+                    <span>${weatherTexts[randomIndex]} • ${temperatures[randomIndex]}</span>
+                `;
+            }
+        }
+
+        // Gestion de l'historique des conversations
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialiser l'historique s'il n'existe pas
+            if (!localStorage.getItem('conversations')) {
+                localStorage.setItem('conversations', JSON.stringify([]));
+            }
+            
+            // Charger l'historique
+            loadConversations();
+            
+            // Gestion du clic sur "Nouvelle conversation"
+            document.getElementById('newChat').addEventListener('click', (e) => {
+                e.preventDefault();
+                // Enregistrer la conversation actuelle si elle n'est pas vide
+                saveCurrentConversation();
+                // Rediriger vers une nouvelle conversation
+                window.location.href = '{{ url_for("reset") }}';
+            });
+            
+            // Gestion du clic sur "Tout supprimer"
+            document.getElementById('deleteAllConversations').addEventListener('click', (e) => {
+                e.preventDefault();
+                if (confirm('Êtes-vous sûr de vouloir supprimer toutes les conversations ?')) {
+                    localStorage.setItem('conversations', JSON.stringify([]));
+                    loadConversations();
+                    // Si c'est une conversation existante, rediriger vers une nouvelle
+                    if (window.location.pathname !== '/') {
+                        window.location.href = '{{ url_for("index") }}';
+                    }
+                }
+            });
+        });
+        
+        // Charger les conversations
+        function loadConversations() {
+            const conversations = JSON.parse(localStorage.getItem('conversations') || '[]');
+            const container = document.getElementById('conversationHistory');
+            
+            if (conversations.length === 0) {
+                container.innerHTML = '<div class="no-conversations">Aucune conversation récente</div>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            conversations.forEach((conv, index) => {
+                const convElement = document.createElement('div');
+                convElement.className = 'conversation-item' + (window.location.pathname.includes(conv.id) ? ' active' : '');
+                convElement.innerHTML = `
+                    <i class="fas fa-comment-alt"></i>
+                    <span class="conversation-title" title="${conv.title}">${conv.title}</span>
+                    <span class="delete-conversation" data-id="${conv.id}" title="Supprimer">
+                        <i class="fas fa-times"></i>
+                    </span>
+                `;
+                
+                // Gestion du clic sur une conversation
+                convElement.addEventListener('click', (e) => {
+                    if (!e.target.closest('.delete-conversation')) {
+                        window.location.href = `/${conv.id}`;
+                    }
+                });
+                
+                container.appendChild(convElement);
+            });
+            
+            // Gestion de la suppression d'une conversation
+            document.querySelectorAll('.delete-conversation').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = btn.getAttribute('data-id');
+                    deleteConversation(id);
+                });
+            });
+        }
+        
+        // Sauvegarder la conversation actuelle
+        function saveCurrentConversation() {
+            const messages = Array.from(document.querySelectorAll('.message-text')).map(el => el.textContent.trim());
+            if (messages.length === 0) return;
+            
+            const conversations = JSON.parse(localStorage.getItem('conversations') || '[]');
+            const currentPath = window.location.pathname.replace('/', '') || 'new';
+            const conversationId = currentPath === 'reset' ? 'new' : currentPath;
+            
+            // Vérifier si la conversation existe déjà
+            const existingIndex = conversations.findIndex(c => c.id === conversationId);
+            const conversation = {
+                id: conversationId,
+                title: messages[0].substring(0, 30) + (messages[0].length > 30 ? '...' : ''),
+                date: new Date().toISOString(),
+                messages: messages
+            };
+            
+            if (existingIndex >= 0) {
+                conversations[existingIndex] = conversation;
+            } else {
+                conversations.unshift(conversation);
+                // Garder seulement les 10 dernières conversations
+                if (conversations.length > 10) {
+                    conversations.pop();
+                }
+            }
+            
+            localStorage.setItem('conversations', JSON.stringify(conversations));
+        }
+        
+        // Supprimer une conversation
+        function deleteConversation(id) {
+            const conversations = JSON.parse(localStorage.getItem('conversations') || '[]');
+            const updatedConversations = conversations.filter(conv => conv.id !== id);
+            localStorage.setItem('conversations', JSON.stringify(updatedConversations));
+            loadConversations();
+            
+            // Si c'est la conversation actuelle, rediriger vers une nouvelle
+            if (window.location.pathname === `/${id}`) {
+                window.location.href = '/';
+            }
+        }
+
+        // Mettre à jour la météo toutes les 30 secondes (simulation)
+        updateWeather();
+        setInterval(updateWeather, 30000);
+        
+        // Gestion du pliage/dépliage de l'historique
+        const historyHeader = document.getElementById('historyHeader');
+        const historyContent = document.getElementById('historyContent');
+        const historyToggle = document.getElementById('historyToggle');
+        
+        // Vérifier l'état du menu dans localStorage
+        const isHistoryCollapsed = localStorage.getItem('historyCollapsed') === 'true';
+        
+        // Appliquer l'état initial
+        if (isHistoryCollapsed) {
+            historyHeader.classList.add('collapsed');
+            historyContent.style.maxHeight = '0';
+            historyContent.style.opacity = '0';
+            historyContent.style.overflow = 'hidden';
+        }
+        
+        // Gérer le clic sur l'en-tête
+        if (historyHeader) {
+            historyHeader.addEventListener('click', () => {
+                const isCollapsed = historyHeader.classList.toggle('collapsed');
+                
+                if (isCollapsed) {
+                    historyContent.style.maxHeight = '0';
+                    historyContent.style.opacity = '0';
+                    historyContent.style.overflow = 'hidden';
+                } else {
+                    historyContent.style.maxHeight = '300px';
+                    historyContent.style.opacity = '1';
+                    historyContent.style.overflow = 'auto';
+                }
+                
+                // Sauvegarder l'état
+                localStorage.setItem('historyCollapsed', isCollapsed);
+            });
+        }
+        
+        // Sauvegarder la conversation avant de quitter la page
+        window.addEventListener('beforeunload', saveCurrentConversation);
+    </script>
+</body>
+</html>

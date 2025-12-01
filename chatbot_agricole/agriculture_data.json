@@ -1,0 +1,223 @@
+{
+  "cultures_burkina": {
+    "cereales": {
+      "mais": {
+        "periode_plantation": "Mai - Juillet",
+        "type_sol": "Sol profond et bien drainé",
+        "duree_croissance": "90-120 jours",
+        "besoin_eau": "500-800 mm",
+        "maladies_communes": ["Striure du maïs", "Charbon du maïs"],
+        "conseils": "Appliquer l'engrais NPK 15-15-15 au semis et à la montaison. Désherbage important dans les 6 premières semaines."
+      },
+      "mil": {
+        "periode_plantation": "Juin - Juillet",
+        "type_sol": "Sol sablonneux, pauvre acceptable",
+        "duree_croissance": "90-110 jours",
+        "besoin_eau": "400-600 mm",
+        "maladies_communes": ["Mildiou", "Ergot du mil"],
+        "conseils": "Culture très résistante à la sécheresse. Semis en poquets. Bon pour rotation."
+      },
+      "sorgho": {
+        "periode_plantation": "Juin - Juillet",
+        "type_sol": "Sol argilo-sableux",
+        "duree_croissance": "120-140 jours",
+        "besoin_eau": "450-650 mm",
+        "maladies_communes": ["Charbon du sorgho", "Anthracnose"],
+        "conseils": "Plante tolérante à la sécheresse. Bon pour zones semi-arides."
+      },
+      "riz": {
+        "periode_plantation": "Juillet - Août (saison pluvieuse)",
+        "type_sol": "Sol argileux, zones inondables",
+        "duree_croissance": "120-150 jours",
+        "besoin_eau": "1200-2000 mm",
+        "maladies_communes": ["Pyriculariose", "Panachure jaune"],
+        "conseils": "Nécessite beaucoup d'eau. Bon pour bas-fonds et zones irriguées."
+      }
+    },
+    "legumineuses": {
+      "arachide": {
+        "periode_plantation": "Juin - Juillet",
+        "type_sol": "Sol léger, sablonneux bien drainé",
+        "duree_croissance": "110-140 jours",
+        "besoin_eau": "500-700 mm",
+        "maladies_communes": ["Rosette de l'arachide", "Cercosporiose"],
+        "conseils": "Butter après floraison. Rotation recommandée. Bon fixateur d'azote."
+      },
+      "niebe": {
+        "periode_plantation": "Juin - Août",
+        "type_sol": "Sol sablo-argileux",
+        "duree_croissance": "60-90 jours",
+        "besoin_eau": "300-500 mm",
+        "maladies_communes": ["Virose du niébé", "Anthracnose"],
+        "conseils": "Résistant à la sécheresse. Peut être associé au maïs ou mil."
+      }
+    },
+    "maraichage": {
+      "tomate": {
+        "periode_plantation": "Octobre - Février (saison sèche avec irrigation)",
+        "type_sol": "Sol riche en matière organique",
+        "duree_croissance": "90-120 jours",
+        "besoin_eau": "600-1000 mm",
+        "maladies_communes": ["Mildiou", "Fusariose", "Nématodes"],
+        "conseils": "Tuteurer les plants. Irrigation goutte-à-goutte recommandée. Traiter préventivement contre le mildiou."
+      },
+      "oignon": {
+        "periode_plantation": "Novembre - Janvier",
+        "type_sol": "Sol léger, bien drainé",
+        "duree_croissance": "120-150 jours",
+        "besoin_eau": "350-550 mm",
+        "maladies_communes": ["Mildiou de l'oignon", "Thrips"],
+        "conseils": "Éviter excès d'eau. Butter légèrement. Culture de saison sèche importante."
+      },
+      "chou": {
+        "periode_plantation": "Octobre - Février",
+        "type_sol": "Sol riche et frais",
+        "duree_croissance": "90-120 jours",
+        "besoin_eau": "450-650 mm",
+        "maladies_communes": ["Hernie du chou", "Piéride du chou"],
+        "conseils": "Arrosage régulier. Protection contre les chenilles importante."
+      }
+    },
+    "cultures_industrielles": {
+      "coton": {
+        "periode_plantation": "Mai - Juillet",
+        "type_sol": "Sol profond argilo-sableux",
+        "duree_croissance": "150-180 jours",
+        "besoin_eau": "700-1300 mm",
+        "maladies_communes": ["Jassides", "Carpocapse"],
+        "conseils": "Culture exigeante en intrants. Suivre calendrier cultural strict."
+      },
+      "sesame": {
+        "periode_plantation": "Juin - Juillet",
+        "type_sol": "Sol bien drainé",
+        "duree_croissance": "90-120 jours",
+        "besoin_eau": "450-650 mm",
+        "maladies_communes": ["Flétrissement bactérien"],
+        "conseils": "Culture peu exigeante. Bon pour diversification."
+      }
+    }
+  },
+  "calendrier_agricole": {
+    "saison_pluies": {
+      "debut": "Mai-Juin",
+      "fin": "Septembre-Octobre",
+      "cultures_principales": ["Maïs", "Mil", "Sorgho", "Riz pluvial", "Arachide", "Niébé", "Coton"],
+      "conseils": "Préparer les champs avant les premières pluies. Semis précoce recommandé."
+    },
+    "saison_seche": {
+      "debut": "Novembre",
+      "fin": "Avril",
+      "cultures_principales": ["Tomate", "Oignon", "Chou", "Salade", "Carotte", "Poivron"],
+      "conseils": "Irrigation obligatoire. Cultures maraîchères très rentables."
+    }
+  },
+  "gestion_sol": {
+    "types_sols_burkina": {
+      "sols_ferrugineux": {
+        "caracteristiques": "Sols dominants au Burkina (70%), pauvres en matière organique",
+        "cultures_adaptees": ["Mil", "Sorgho", "Arachide"],
+        "amelioration": "Apport de fumure organique, compost, rotation avec légumineuses"
+      },
+      "sols_hydromorphes": {
+        "caracteristiques": "Bas-fonds, zones humides",
+        "cultures_adaptees": ["Riz", "Cultures maraîchères"],
+        "amelioration": "Drainage si excès d'eau, irrigation contrôlée"
+      },
+      "sols_bruns": {
+        "caracteristiques": "Sols relativement fertiles, zones soudaniennes",
+        "cultures_adaptees": ["Maïs", "Coton", "Soja"],
+        "amelioration": "Maintenir matière organique, éviter érosion"
+      }
+    },
+    "techniques_amelioration": {
+      "compostage": {
+        "description": "Transformation de déchets organiques en engrais",
+        "methode": "Tas de résidus végétaux + fumier + eau, retourner chaque 15 jours pendant 3 mois",
+        "dosage": "10-20 tonnes/hectare"
+      },
+      "zaï": {
+        "description": "Technique traditionnelle burkinabè pour zones dégradées",
+        "methode": "Creuser des poquets (20-40cm), ajouter compost, capturer eau de pluie",
+        "avantages": "Réhabilite sols dégradés, augmente rendements de 50-100%"
+      },
+      "demi_lune": {
+        "description": "Technique de conservation des eaux et des sols",
+        "methode": "Creuser demi-cercles pour capter l'eau, planter dans le demi-cercle",
+        "avantages": "Réduit érosion, améliore infiltration"
+      }
+    }
+  },
+  "lutte_parasites": {
+    "methodes_biologiques": {
+      "neem": {
+        "utilisation": "Insecticide naturel contre chenilles, pucerons, criquets",
+        "preparation": "Moudre 1 kg graines neem + 10L eau, laisser 24h, filtrer, pulvériser",
+        "frequence": "Tous les 7-10 jours"
+      },
+      "piment": {
+        "utilisation": "Répulsif contre insectes",
+        "preparation": "Bouillir 100g piment sec dans 1L eau, refroidir, ajouter savon liquide",
+        "frequence": "Après chaque pluie"
+      },
+      "rotation_cultures": {
+        "principe": "Alterner familles de plantes pour casser cycle parasites",
+        "exemple": "Céréale → Légumineuse → Céréale",
+        "avantages": "Réduit parasites, améliore fertilité sol"
+      }
+    },
+    "methodes_culturales": {
+      "association_cultures": {
+        "principe": "Cultiver ensemble plantes qui se protègent mutuellement",
+        "exemples": [
+          "Maïs + Niébé : niébé enrichit sol en azote",
+          "Tomate + Basilic : basilic repousse insectes"
+        ]
+      },
+      "paillage": {
+        "avantages": "Conserve humidité, réduit adventices, protège sol",
+        "materiaux": "Paille, résidus de culture, feuilles"
+      }
+    }
+  },
+  "irrigation": {
+    "techniques": {
+      "goutte_a_goutte": {
+        "description": "Irrigation localisée au pied des plants",
+        "avantages": "Économie d'eau 50-70%, réduction maladies",
+        "cultures": "Tomate, Poivron, Aubergine, Melon",
+        "cout": "Moyen à élevé"
+      },
+      "aspersion": {
+        "description": "Arrosage par jets d'eau",
+        "avantages": "Couvre grande surface",
+        "cultures": "Cultures maraîchères diverses",
+        "cout": "Élevé"
+      },
+      "arrosoir": {
+        "description": "Irrigation manuelle",
+        "avantages": "Faible coût, contrôle précis",
+        "cultures": "Petites surfaces maraîchères",
+        "cout": "Très faible"
+      },
+      "bassin_retention": {
+        "description": "Collecte eau de pluie pour irrigation saison sèche",
+        "avantages": "Autonomie en eau, gratuit après investissement",
+        "dimensionnement": "10-50 m³ selon besoins",
+        "cout": "Moyen"
+      }
+    },
+    "gestion_eau": {
+      "besoins_par_culture": {
+        "tomate": "5-6 L/plant/jour (saison sèche)",
+        "oignon": "20-25 mm/semaine",
+        "chou": "30-40 mm/semaine",
+        "salade": "15-20 mm/semaine"
+      },
+      "periodes_critiques": {
+        "tomate": "Floraison et formation fruits",
+        "oignon": "Formation bulbes",
+        "mais": "Floraison"
+      }
+    }
+  }
+}
