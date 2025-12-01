@@ -44,10 +44,6 @@
             <a href="#meteo"><i class="fas fa-cloud-sun"></i> Météo</a>
             <a href="#plantation"><i class="fas fa-seedling"></i> Calendrier des plantations</a>
             <a href="#parasites"><i class="fas fa-bug"></i> Lutte contre les parasites</a>
-            
-            <div class="menu-divider"></div>
-            <a href="{{ url_for('metrics') }}"><i class="fas fa-chart-line"></i> Métriques</a>
-            <a href="{{ url_for('performance') }}"><i class="fas fa-tachometer-alt"></i> Performance</a>
         </nav>
     </div>
 
@@ -106,7 +102,7 @@
                         <div class="message-text">{{ msg.bot|safe }}</div>
                         <div class="message-meta">
                             <span class="message-time">{{ msg.timestamp }}</span>
-                            <span class="confidence">Confiance: {{ msg.score }}%</span>
+                            <span class="confidence">Confiance&nbsp;: {{ msg.score }} %</span>
                         </div>
                     </div>
                 </div>
